@@ -1,6 +1,6 @@
 # VPSCodeEditor
 A basic IDE online, especially designed and improved for web development.   
-Paste me at root of your web server and enjoy !   
+Paste me at root of your VPS and enjoy !   
 
 - Saving : Cmd/Ctrl+S
 - Code folding : 
