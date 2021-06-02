@@ -10,6 +10,9 @@ function test() // fold
   All this block will be folded 
 }
 ```
-- Test your website : Cmd/Ctrl+B (must be named index.[php,html]
-- Get back to your editor : Cmd/Ctrl
-- Start your node server : Cmd/Ctrl+Shift+B (must be named index.js)
+- Test your website :
+  + Open : Cmd/Ctrl+B (must be named index.[php,html]
+  + Get back to your editor : Cmd/Ctrl
+- Start your node server : 
+  + Launch : Cmd/Ctrl+Shift+B (must be named index.js)
+  + Stop : Cmd/Ctrl+Shift+B
