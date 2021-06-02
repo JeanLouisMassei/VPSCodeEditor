@@ -28,8 +28,15 @@
 		    		$obj['data'] = listFolderFiles($dir . '/' . $ff, $obj['data']);
 
 		    	} else if ($obj['value'] == "index.js") {
+		    	    
+		    	    $id = $dir . '/' . $ff;
+		    	    $id = str_replace(dirname(__FILE__), '', $id);
+		    	    $id = str_replace('/', '', $id);
+		            $id = str_replace('.', '', $id);
+		    	    $file = 'out.txt';
+                    file_put_contents($file, $id);    
 
-    		        $output = shell_exec('screen -list | grep Alborz5server');
+    		        $output = shell_exec('screen -list | grep ' . $id);
     		    	   
 		    	    if (strlen($output) > 0) 
                         $obj['processing'] = true;
@@ -44,8 +51,8 @@
 
 		$data = array();
 
-		$data = listFolderFiles(dirname(__FILE__), $data);
-
+		$data = listFolderFiles(dirname(__FILE__), $data); 
+	
 		echo json_encode($data);
 	} 
 	
@@ -83,13 +90,17 @@
 	
 	else if (isset($_POST['_toggleNodeServer'])) // fold
 	{ 
-	    $output = shell_exec('screen -list | grep Alborz5server');
+		$id = $_POST['_toggleNodeServer']; 
+		$id = str_replace('/', '', $id);
+		$id = str_replace('.', '', $id);
+		
+		$output = shell_exec('screen -list | grep ' . $id);
     	
 	    if (strlen($output) > 0) 
-		    shell_exec('screen -S Alborz5server -p 0 -X stuff "^C"');
+		    shell_exec('screen -S ' . $id . ' -p 0 -X stuff "^C"');
 		else
 		    // /!\ screen is executed in S-data-www, not in root. Equivalent of "screen-list" from root console would be "ls -laR /var/run/screen/S-www-data"
-		    shell_exec('screen -dmS Alborz5server node Alborz5/server/index.js');
+		    shell_exec('screen -dmS ' . $id . ' node ' . $_POST['_toggleNodeServer']);
 	} 
 	
 	else {	
@@ -182,28 +193,6 @@
 
        <script type="text/javascript">
        
-   
-   
-
-       
-        
-        
-
-       		/*
-
-       		focntions :
-       		db click sur une var : propos de select toutes
-			auto comment ligne
-			propo quand tu tapes
-
-			si je comment un head de fct, comment toute la fct
-
-       		*/
-    
-    
-    
-
-            
             function rootOf(itm) // fold
             {
                 while (itm.$parent != "0") {
@@ -212,7 +201,6 @@
               
                 return itm.value;
             }
-
 
 
             // based on item id, return path of the item 
@@ -230,8 +218,6 @@
 		    	return path;
 			}
             
-      
-      
                 
        		let hovered = null;
        		let selected = null;
@@ -250,7 +236,6 @@
            		    $$("externConsole").define("value", currentText  + "\n" + msg);
                     $$("externConsole").refresh();
                 }  
-            
     
 	       		// Ctrl key actions
 	       		document.addEventListener("keydown", function(e) // fol
@@ -304,7 +289,7 @@
                                     
                                     $.ajax({
 								    	type: "POST",
-								    	data : { _toggleNodeServer : true },
+								    	data : { _toggleNodeServer : pathOfId(res[0].id) },
 								    	success: function(response) {
 								    	    if (res[0].processing)
 								    		    webix.message('Node server stopped successfully');
