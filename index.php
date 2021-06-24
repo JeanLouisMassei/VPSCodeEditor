@@ -1,5 +1,6 @@
 <?php
-	
+
+    
 	if (isset($_POST['_scandir'])) // fold
 	{
 		function listFolderFiles($dir, $data) {
@@ -33,8 +34,8 @@
 		    	    $id = str_replace(dirname(__FILE__), '', $id);
 		    	    $id = str_replace('/', '', $id);
 		            $id = str_replace('.', '', $id);
-		    	    $file = 'out.txt';
-                    file_put_contents($file, $id);    
+		    	    //$file = 'out.txt';
+                    //file_put_contents($file, $id);    
 
     		        $output = shell_exec('screen -list | grep ' . $id);
     		    	   
@@ -103,6 +104,26 @@
 		    shell_exec('screen -dmS ' . $id . ' node ' . $_POST['_toggleNodeServer']);
 	} 
 	
+    else if (!empty($_FILES['_uploadFile'])) // fold
+    {
+    	
+    	$dossier = $_POST['_path'] . "/";
+    	$fichier = basename($_FILES['_uploadFile']['name']);
+    	
+    	if (move_uploaded_file($_FILES['_uploadFile']['tmp_name'], $dossier . $fichier)) 
+	    {
+	        
+	        echo $fichier;
+	    }
+	    else
+	    {
+	        
+	        echo 'Error #'.$_FILES['_uploadFile']['error'] .  ' }';
+	        
+	    }
+        
+    }
+	
 	else {	
 ?>
 
@@ -119,6 +140,16 @@
        	<link rel="stylesheet" href="//cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css">
        	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
        	
+       	<!--
+       	<form id="uploadForm" action="?" style="visibility:hidden; position:absolute" method="post">
+            <input type="file" id="fileUploader" name="_uploadFile">
+        </form>
+        -->
+        
+        
+        <input type="file" id="fileUploader" style="visibility:hidden; position:absolute" name="file">
+        
+
        	<style>
     
        		#parent {
@@ -192,6 +223,38 @@
    <body>
 
        <script type="text/javascript">
+       
+            // fonction d'upload (clic droit sur un folder)
+            document.getElementById("fileUploader").onchange = function() // fold
+            {
+               
+                var fileInput = document.getElementById('fileUploader');
+                var file = fileInput.files[0];
+                console.log(file);
+                
+                var formData = new FormData();
+                formData.append('_uploadFile', file, file.name);
+                formData.append('_path', contextPath);
+           
+                
+                $.ajax({
+			    	type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+	       			
+	       				$$('sideMenu').data.add({value:response}, 0, contextId ); // (0 : en haut du folder)
+						$$('sideMenu').sort("#value#", "asc"); //sorts all nodes (parent, child)
+						
+	       				webix.message(response + ' uploaded successfully');
+			    	}
+			  	});
+			  	
+                
+                
+            };
+
        
             function rootOf(itm) // fold
             {
@@ -516,6 +579,14 @@
     							window.open(contextPath, '_blank');
 								//window.open(contextPath);
 					       	}
+					       	
+					       	else if (id == "Upload file") // fold
+					       	{
+					       	    
+					       	    var uploader = document.getElementById("fileUploader");
+                                uploader.click();
+                    
+					       	}
 
 					       	hovered = null;
        						selected = null;
@@ -721,10 +792,12 @@
              								} else {
         
              									$$('contextMenu').parse([
+             									    "Upload file",
              										"New file",
              										// "Rename",
-             										{ $template:"Separator" },
+             										
         								  			"New folder", 
+        								  			{ $template:"Separator" },
         								  			"Delete",
         								  			// { $template:"Separator" },
         								  			// "Download"
@@ -783,7 +856,6 @@
                                     id:"externConsole",
                                   	label:"",
                                   	borderless:true,
-                                  	disabled:true,
                                 }
                             ]
 	                    }
