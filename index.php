@@ -644,8 +644,10 @@
         								    
         								        //console.log(item.value);
         
-        								    // si l'item cliqué n'est pas un dossier
+        								    // si l'item cliqué n'est pas un dossier (dc un fichier)
         								    if (item.value.includes(".")) {
+										    
+										    document.title = item.value;
         
         								    	// je déselect l'ancien selected
         								    	if (selected != null) {
