@@ -16,4 +16,5 @@ function test() // fold
 - Start your node server : 
   + Launch : Cmd/Ctrl+Shift+B (must be named index.js)
   + Stop : Cmd/Ctrl+Shift+B
-- Upload files : just right click on any folder and select Upload file
+- Download and upload files easily
+- Create and delete files or folders
